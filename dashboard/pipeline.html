@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Easy to Buy — Pipeline</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="topnav">
+  <div class="topnav-inner">
+    <a href="index.html" class="brand" aria-label="Easy to Buy — Dashboard">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span class="brand-word">Easy to Buy</span>
+    </a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="index.html" class="nav-link" data-page="dashboard">Dashboard</a>
+      <a href="pipeline.html" class="nav-link" data-page="pipeline">Pipeline</a>
+      <a href="contacts.html" class="nav-link" data-page="contacts">Contacts</a>
+      <a href="touches.html" class="nav-link" data-page="touches">Touches</a>
+      <a href="partners.html" class="nav-link" data-page="partners">Partners</a>
+      <a href="summary.html" class="nav-link" data-page="summary">Summary</a>
+    </nav>
+    <button type="button" class="nav-toggle" aria-label="Open menu" aria-expanded="false">&#9776;</button>
+    <div class="avatar" aria-hidden="true">NS</div>
+  </div>
+</header>
+
+<section class="page-header">
+  <div class="page-header-inner">
+    <div class="page-header-title">Pipeline</div>
+    <div class="page-header-subtitle">All 22 active prospects across the three pipeline stages.</div>
+  </div>
+</section>
+
+<main class="page-content">
+  <div id="pipeline-filter"></div>
+  <div class="kanban-board" id="kanban-board"></div>
+</main>
+
+<footer class="page-footer">
+  <p>Prototype dashboard &middot; fictional dummy data for pitch purposes only &middot; not for external distribution</p>
+</footer>
+
+<script src="data.js"></script>
+<script src="shared.js"></script>
+<script src="pipeline.js"></script>
+</body>
+</html>

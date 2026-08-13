@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Easy to Buy — Contacts</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="topnav">
+  <div class="topnav-inner">
+    <a href="index.html" class="brand" aria-label="Easy to Buy — Dashboard">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span class="brand-word">Easy to Buy</span>
+    </a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="index.html" class="nav-link" data-page="dashboard">Dashboard</a>
+      <a href="pipeline.html" class="nav-link" data-page="pipeline">Pipeline</a>
+      <a href="contacts.html" class="nav-link" data-page="contacts">Contacts</a>
+      <a href="touches.html" class="nav-link" data-page="touches">Touches</a>
+      <a href="partners.html" class="nav-link" data-page="partners">Partners</a>
+      <a href="summary.html" class="nav-link" data-page="summary">Summary</a>
+    </nav>
+    <button type="button" class="nav-toggle" aria-label="Open menu" aria-expanded="false">&#9776;</button>
+    <div class="avatar" aria-hidden="true">NS</div>
+  </div>
+</header>
+
+<section class="page-header">
+  <div class="page-header-inner">
+    <div class="page-header-title">Contacts</div>
+    <div class="page-header-subtitle">Full directory of all 22 active prospects. Click a column header to sort.</div>
+  </div>
+</section>
+
+<main class="page-content">
+  <div id="contacts-filter"></div>
+  <div class="table-scroll">
+    <table class="contacts-table" id="contacts-table">
+      <thead>
+        <tr>
+          <th class="sticky-col" data-key="company">Company <span class="sort-arrow">&darr;</span></th>
+          <th data-key="contactName">Contact</th>
+          <th data-key="stage">Stage</th>
+          <th data-key="priority">Priority</th>
+          <th data-key="whaleTag">Whale / Minnow</th>
+          <th data-key="touchSeverity">Touch status</th>
+          <th data-key="feePotential">Fee potential</th>
+          <th data-key="mwPartner">MW partner</th>
+          <th data-key="city">City</th>
+          <th data-key="state">State</th>
+          <th data-key="type">Type</th>
+          <th data-key="email">Email</th>
+          <th data-key="phone">Phone</th>
+          <th data-key="linkedin">LinkedIn</th>
+          <th data-key="firstMeeting">First meeting</th>
+          <th data-key="lastTouch">Last touch</th>
+          <th data-key="daysSinceLastTouch">Days since touch</th>
+          <th data-key="closingSchedule">Closing schedule</th>
+          <th data-key="status">Status</th>
+          <th data-key="natureOfWork">Nature of work</th>
+          <th data-key="notes">Notes</th>
+          <th data-key="touchIdeas">Touch ideas</th>
+        </tr>
+      </thead>
+      <tbody id="contacts-tbody"></tbody>
+    </table>
+  </div>
+  <div class="contacts-cards" id="contacts-cards"></div>
+</main>
+
+<footer class="page-footer">
+  <p>Prototype dashboard &middot; fictional dummy data for pitch purposes only &middot; not for external distribution</p>
+</footer>
+
+<script src="data.js"></script>
+<script src="shared.js"></script>
+<script src="contacts.js"></script>
+</body>
+</html>

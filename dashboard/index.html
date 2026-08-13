@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Easy to Buy — Pipeline Dashboard</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ===================== TOP NAV ===================== -->
+<header class="topnav">
+  <div class="topnav-inner">
+    <a href="index.html" class="brand" aria-label="Easy to Buy — Dashboard">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span class="brand-word">Easy to Buy</span>
+    </a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="index.html" class="nav-link" data-page="dashboard">Dashboard</a>
+      <a href="pipeline.html" class="nav-link" data-page="pipeline">Pipeline</a>
+      <a href="contacts.html" class="nav-link" data-page="contacts">Contacts</a>
+      <a href="touches.html" class="nav-link" data-page="touches">Touches</a>
+      <a href="partners.html" class="nav-link" data-page="partners">Partners</a>
+      <a href="summary.html" class="nav-link" data-page="summary">Summary</a>
+    </nav>
+    <button type="button" class="nav-toggle" aria-label="Open menu" aria-expanded="false">&#9776;</button>
+    <div class="avatar" aria-hidden="true">NS</div>
+  </div>
+</header>
+
+<!-- ===================== HERO ===================== -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-figures">
+      <div class="hero-figure-main">
+        <span class="hero-label">Total fee potential</span>
+        <span class="hero-number" id="hero-total">$0</span>
+      </div>
+      <div class="hero-figure-sub">
+        <span class="hero-label">Closed (last 12 months)</span>
+        <span class="hero-number-sub" id="hero-closed">$0</span>
+      </div>
+    </div>
+    <div class="hero-progress-wrap">
+      <div class="hero-progress-track">
+        <div class="hero-progress-fill" id="hero-progress-fill"></div>
+      </div>
+      <div class="hero-progress-caption" id="hero-progress-caption">0% of pipeline value is in the closing stage</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SUMMARY STAT ROW ===================== -->
+<section class="stat-row">
+  <button type="button" class="stat-card" id="stat-active" data-stat="allFlat">
+    <span class="stat-value" id="stat-active-value">0</span>
+    <span class="stat-label">Active prospects</span>
+    <span class="stat-card-hint">View all &rarr;</span>
+  </button>
+  <button type="button" class="stat-card" id="stat-closed" data-stat="wins">
+    <span class="stat-value" id="stat-closed-value">0</span>
+    <span class="stat-label">Closed deals</span>
+    <span class="stat-card-hint">Browse won matters &rarr;</span>
+  </button>
+  <button type="button" class="stat-card stat-card-warning" id="stat-overdue" data-stat="overdueFlat">
+    <span class="stat-value" id="stat-overdue-value">0</span>
+    <span class="stat-label">Overdue touches</span>
+    <span class="stat-card-hint">View overdue &rarr;</span>
+  </button>
+  <div class="stat-card stat-card-static" id="stat-compliance">
+    <span class="stat-value" id="stat-compliance-value">0%</span>
+    <span class="stat-label">Touched within cadence</span>
+    <span class="stat-card-hint">On track + Due soon, of all active prospects</span>
+  </div>
+</section>
+
+<!-- ===================== SIDEBAR + MAIN ===================== -->
+<section class="workspace">
+  <aside class="sidebar" aria-label="Pipeline stage filters">
+    <ul class="stage-list" id="stage-list">
+      <li><button class="stage-btn active" data-stage="All">All <span class="stage-count" id="count-all">0</span></button></li>
+      <li><button class="stage-btn" data-stage="Prospecting">Prospecting <span class="stage-count" id="count-prospecting">0</span></button></li>
+      <li><button class="stage-btn" data-stage="Pitching">Pitching <span class="stage-count" id="count-pitching">0</span></button></li>
+      <li><button class="stage-btn" data-stage="Closing">Closing <span class="stage-count" id="count-closing">0</span></button></li>
+    </ul>
+  </aside>
+
+  <main class="main-area" id="main-area">
+    <!-- populated by app.js -->
+  </main>
+</section>
+
+<footer class="page-footer">
+  <p>Prototype dashboard &middot; fictional dummy data for pitch purposes only &middot; not for external distribution</p>
+</footer>
+
+<script src="data.js"></script>
+<script src="shared.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

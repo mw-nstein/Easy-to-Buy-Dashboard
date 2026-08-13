@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Easy to Buy — Executive Summary</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="topnav no-print">
+  <div class="topnav-inner">
+    <a href="index.html" class="brand" aria-label="Easy to Buy — Dashboard">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span class="brand-word">Easy to Buy</span>
+    </a>
+    <nav class="nav-links" aria-label="Primary">
+      <a href="index.html" class="nav-link" data-page="dashboard">Dashboard</a>
+      <a href="pipeline.html" class="nav-link" data-page="pipeline">Pipeline</a>
+      <a href="contacts.html" class="nav-link" data-page="contacts">Contacts</a>
+      <a href="touches.html" class="nav-link" data-page="touches">Touches</a>
+      <a href="partners.html" class="nav-link" data-page="partners">Partners</a>
+      <a href="summary.html" class="nav-link" data-page="summary">Summary</a>
+    </nav>
+    <button type="button" class="nav-toggle" aria-label="Open menu" aria-expanded="false">&#9776;</button>
+    <div class="avatar" aria-hidden="true">NS</div>
+  </div>
+</header>
+
+<section class="page-header">
+  <div class="page-header-inner">
+    <div class="page-header-title">Executive Summary</div>
+    <div class="page-header-subtitle">Pipeline health at a glance — condensed for printing or sharing in a partner meeting.</div>
+  </div>
+</section>
+
+<main class="page-content">
+  <div class="no-print" style="margin-bottom: 18px;">
+    <button type="button" class="print-btn" id="print-btn">Print this summary</button>
+  </div>
+
+  <div class="summary-section">
+    <div class="summary-section-title">Headline figures</div>
+    <div class="summary-figure-row" id="summary-figures"></div>
+  </div>
+
+  <div class="summary-section">
+    <div class="summary-section-title">Pipeline by stage</div>
+    <ul class="summary-list" id="summary-stages"></ul>
+  </div>
+
+  <div class="summary-section">
+    <div class="summary-section-title">Top 10 prospects by fee potential</div>
+    <ul class="summary-list" id="summary-top-prospects"></ul>
+  </div>
+
+  <div class="summary-section" id="summary-partners-section">
+    <div class="summary-section-title">Partner rollup</div>
+    <ul class="summary-list" id="summary-partners"></ul>
+  </div>
+
+  <p style="font-size: 11.5px; color: var(--text-secondary); text-align: center; margin-top: 4px;">
+    Prototype dashboard &middot; fictional dummy data for pitch purposes only &middot; not for external distribution
+  </p>
+</main>
+
+<footer class="page-footer no-print">
+  <p>Prototype dashboard &middot; fictional dummy data for pitch purposes only &middot; not for external distribution</p>
+</footer>
+
+<script src="data.js"></script>
+<script src="shared.js"></script>
+<script src="summary.js"></script>
+</body>
+</html>

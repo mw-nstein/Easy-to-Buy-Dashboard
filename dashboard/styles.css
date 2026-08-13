@@ -1,0 +1,2040 @@
+/* ===================================================================
+   Easy to Buy — Pipeline Dashboard
+   Font note: brand deck uses "Corporative" (licensed). No licensed web
+   font file is available in this prototype, so we fall back to the
+   system UI sans-serif stack below. Swap in @font-face for Corporative
+   once a licensed web-font file is available. PLACEHOLDER FONT.
+   =================================================================== */
+
+:root {
+  --navy: #0F2A4A;
+  --navy-secondary: #1C3D63;
+  --gold: #C6A15B;
+  --cream: #F7F5F0;
+  --white: #FFFFFF;
+  --text-heading: #1A1A1A;
+  --text-secondary: #7A756A;
+  --warning: #B5502E;
+  --warning-bg: #FBEDE7;
+  --border-subtle: #E6E1D6;
+  --radius: 8px;
+
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--cream);
+  color: var(--text-heading);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: inherit; text-decoration: none; }
+button { font-family: inherit; }
+
+/* ===================== TOP NAV ===================== */
+
+.topnav {
+  background: var(--navy);
+  border-bottom: 1px solid var(--navy-secondary);
+  position: relative;
+}
+
+.topnav-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  overflow-x: auto;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-right: auto;
+  border-radius: 6px;
+  transition: opacity 0.15s ease;
+}
+
+.brand:hover {
+  opacity: 0.85;
+}
+
+.brand-mark {
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+  background: var(--gold);
+  flex-shrink: 0;
+}
+
+.brand-word {
+  color: var(--white);
+  font-weight: 600;
+  font-size: 16px;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+
+.nav-links {
+  display: flex;
+  gap: 28px;
+}
+
+.nav-link {
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 14px;
+  font-weight: 500;
+  padding: 22px 2px 20px;
+  border-bottom: 2px solid transparent;
+  transition: color 0.15s ease, border-color 0.15s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.nav-link:hover {
+  color: var(--white);
+}
+
+.nav-link.active {
+  color: var(--white);
+  border-bottom-color: var(--gold);
+}
+
+.nav-toggle {
+  display: none;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 6px;
+  width: 36px;
+  height: 32px;
+  color: var(--white);
+  font-size: 16px;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.nav-toggle:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* Mobile nav: collapse the horizontal list into a toggled dropdown panel
+   instead of letting it overflow with no indication it scrolls. Reuses
+   the same .nav-links markup — only its layout/visibility changes. */
+@media (max-width: 768px) {
+  .nav-toggle {
+    display: flex;
+  }
+
+  .nav-links {
+    display: none;
+  }
+
+  .nav-links.open {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    position: absolute;
+    top: 64px;
+    left: 0;
+    right: 0;
+    background: var(--navy);
+    border-top: 1px solid var(--navy-secondary);
+    padding: 6px 20px 14px;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25);
+    z-index: 40;
+  }
+
+  .nav-links.open .nav-link {
+    padding: 12px 2px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .nav-links.open .nav-link:last-child {
+    border-bottom: none;
+  }
+
+  .nav-links.open .nav-link.active {
+    border-bottom-color: rgba(255, 255, 255, 0.08);
+    border-left: 2px solid var(--gold);
+    padding-left: 10px;
+  }
+}
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--navy-secondary);
+  border: 1px solid rgba(198, 161, 91, 0.5);
+  color: var(--gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.avatar:hover {
+  background: rgba(198, 161, 91, 0.22);
+}
+
+.avatar:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+/* ===================== AVATAR DROPDOWN MENU ===================== */
+
+.avatar-menu-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+
+/* position:fixed (not absolute) and appended to <body>, not .avatar-menu-
+   wrap — .topnav-inner has overflow-x:auto for the narrow-desktop nav
+   fallback, and per the CSS spec a non-visible overflow-x forces
+   overflow-y to auto too. An absolutely-positioned dropdown nested
+   inside that container still counts toward its scrollable area, so
+   focusing a menu item made the browser auto-scroll the 64px-tall navbar
+   to "reveal" it — visibly yanking the whole nav up. Fixed positioning
+   computed in JS (see shared.js initAvatarMenu) sidesteps that ancestor
+   entirely. top/right are set inline by JS, not here. */
+.avatar-dropdown {
+  position: fixed;
+  width: 200px;
+  background: var(--white);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius);
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.2);
+  padding: 8px;
+  z-index: 200;
+}
+
+.avatar-dropdown-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-heading);
+  padding: 6px 10px 0;
+}
+
+.avatar-dropdown-title {
+  font-size: 11.5px;
+  color: var(--text-secondary);
+  padding: 0 10px 8px;
+}
+
+.avatar-dropdown-divider {
+  height: 1px;
+  background: var(--border-subtle);
+  margin: 4px 0;
+}
+
+.avatar-dropdown-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  padding: 9px 10px;
+  font-size: 13px;
+  font-family: inherit;
+  color: var(--text-heading);
+  cursor: pointer;
+}
+
+.avatar-dropdown-item:hover,
+.avatar-dropdown-item:focus-visible {
+  background: var(--cream);
+  outline: none;
+}
+
+.avatar-dropdown-item:disabled {
+  color: var(--text-secondary);
+  cursor: default;
+  background: transparent;
+}
+
+.avatar-dropdown-item-danger {
+  color: var(--warning);
+}
+
+.avatar-dropdown-item-danger:hover,
+.avatar-dropdown-item-danger:focus-visible {
+  background: var(--warning-bg);
+}
+
+/* Hides the Partners/Summary nav links for the Partner persona — added
+   via JS (see shared.js applyPersonaNav), not baked into the markup, so
+   the same HTML serves both personas. */
+.nav-link-hidden {
+  display: none;
+}
+
+/* ===================== HERO ===================== */
+
+.hero {
+  background: var(--navy);
+}
+
+.hero-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 32px 44px;
+}
+
+.hero-figures {
+  display: flex;
+  align-items: flex-start;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.hero-label {
+  display: block;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 8px;
+}
+
+.hero-figure-sub .hero-label {
+  margin-bottom: 6px;
+}
+
+.hero-number {
+  color: var(--white);
+  font-size: 48px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1;
+}
+
+.hero-number-sub {
+  color: var(--gold);
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.hero-progress-wrap {
+  margin-top: 28px;
+  max-width: 560px;
+}
+
+.hero-progress-track {
+  height: 8px;
+  border-radius: 999px;
+  background: var(--navy-secondary);
+  overflow: hidden;
+}
+
+.hero-progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--gold);
+  width: 0%;
+  transition: width 0.6s ease;
+}
+
+.hero-progress-caption {
+  margin-top: 10px;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 12.5px;
+}
+
+/* ===================== STAT ROW ===================== */
+
+.stat-row {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 28px 32px 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 18px;
+}
+
+.stat-card {
+  background: var(--white);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius);
+  padding: 20px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+  width: 100%;
+  font-family: inherit;
+}
+
+.stat-card:hover {
+  border-color: var(--gold);
+  box-shadow: 0 4px 14px rgba(15, 42, 74, 0.08);
+  transform: translateY(-1px);
+}
+
+.stat-card:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+.stat-card.active {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 1px var(--gold);
+}
+
+.stat-card-hint {
+  /* Darker than --text-secondary at full opacity (not a reduced-opacity
+     tint of it) — the previous 80%-opacity treatment measured under 3.5:1
+     contrast on white, below WCAG AA for small text. */
+  font-size: 11px;
+  color: #5C574C;
+  margin-top: 2px;
+}
+
+.stat-value {
+  font-size: 30px;
+  font-weight: 700;
+  color: var(--text-heading);
+  line-height: 1.1;
+}
+
+.stat-label {
+  font-size: 13px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.stat-card-warning {
+  border-color: rgba(181, 80, 46, 0.25);
+  background: var(--warning-bg);
+}
+
+.stat-card-warning .stat-value {
+  color: var(--warning);
+}
+
+/* The compliance KPI tile is informational, not a drill-down link like
+   the other three stat cards — no pointer cursor, no hover lift, no
+   button semantics. */
+.stat-card-static {
+  cursor: default;
+}
+
+.stat-card-static:hover {
+  border-color: var(--border-subtle);
+  box-shadow: none;
+  transform: none;
+}
+
+/* ===================== WORKSPACE (sidebar + main) ===================== */
+
+.workspace {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 32px 56px;
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.sidebar {
+  width: 150px;
+  flex-shrink: 0;
+  background: var(--navy);
+  border-radius: var(--radius);
+  padding: 10px;
+  position: sticky;
+  top: 24px;
+}
+
+.stage-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.stage-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 12px;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 13.5px;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.stage-btn:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--white);
+}
+
+.stage-btn.active {
+  background: var(--gold);
+  color: var(--navy);
+  font-weight: 700;
+}
+
+/* Default focus ring (white on navy) is fine for inactive buttons, but a
+   same-hued ring on the gold active button blends into its own
+   background — give the active state a navy ring instead so it stays
+   visible against gold. */
+.stage-btn:focus-visible {
+  outline: 2px solid var(--white);
+  outline-offset: -2px;
+}
+
+.stage-btn.active:focus-visible {
+  outline: 2px solid var(--navy);
+}
+
+.stage-count {
+  font-size: 12px;
+  font-weight: 600;
+  opacity: 0.85;
+}
+
+.stage-btn.active .stage-count {
+  opacity: 1;
+}
+
+.main-area {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ---------- Two-column "All" view ---------- */
+
+.all-view {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+@media (max-width: 860px) {
+  .all-view { grid-template-columns: 1fr; }
+}
+
+.panel {
+  background: var(--white);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.panel-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.panel-title {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--text-heading);
+}
+
+.panel-subtitle {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.panel-header-right {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.panel-body {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Suggested touches rows */
+
+.touch-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 20px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.touch-row:last-child { border-bottom: none; }
+
+.touch-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.touch-company {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text-heading);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.touch-contact {
+  font-size: 12px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.touch-days {
+  font-size: 11.5px;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+  text-align: right;
+  min-width: 78px;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 4px 9px;
+  border-radius: 999px;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.badge-overdue {
+  background: var(--warning-bg);
+  color: var(--warning);
+}
+
+.badge-duesoon {
+  background: rgba(198, 161, 91, 0.16);
+  color: #8A6B2F;
+}
+
+.badge-ontrack {
+  background: rgba(15, 42, 74, 0.08);
+  color: var(--navy-secondary);
+}
+
+/* "Needs requalification" (70+ days) is deliberately NOT another shade of
+   the overdue-orange — it's a different kind of signal (a decision to
+   make, not an action to take), so it gets its own muted plum/slate hue
+   distinct from every other badge on the site. */
+.badge-requalify {
+  background: rgba(107, 76, 122, 0.14);
+  color: #5C3F6B;
+}
+
+/* Priority badges */
+.badge-priority-high {
+  background: rgba(198, 161, 91, 0.18);
+  color: #8A6B2F;
+}
+.badge-priority-low {
+  background: rgba(122, 117, 106, 0.14);
+  color: var(--text-secondary);
+}
+.badge-priority-prospect {
+  background: rgba(15, 42, 74, 0.08);
+  color: var(--navy-secondary);
+}
+
+/* Stage badges */
+.badge-stage-prospecting {
+  background: rgba(15, 42, 74, 0.08);
+  color: var(--navy-secondary);
+}
+.badge-stage-pitching {
+  background: rgba(198, 161, 91, 0.18);
+  color: #8A6B2F;
+}
+.badge-stage-closing {
+  background: rgba(181, 80, 46, 0.14);
+  color: var(--warning);
+}
+
+/* Whale / Minnow badges — Whale is a solid navy fill (reads "substantial"),
+   Minnow a light outline (reads "lightweight"). Deliberately not gold or
+   warning-orange so it doesn't collide with priority/touch-status badges. */
+.badge-whale {
+  background: var(--navy);
+  color: var(--white);
+}
+.badge-minnow {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-subtle);
+}
+
+/* Top prospects rows */
+
+.prospect-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 20px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.prospect-row:last-child { border-bottom: none; }
+
+.prospect-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.prospect-company {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--text-heading);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.prospect-fee {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.empty-state {
+  padding: 28px 20px;
+  color: var(--text-secondary);
+  font-size: 13px;
+  text-align: center;
+}
+
+/* ---------- Single-stage card list view ---------- */
+
+.stage-view {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.contact-card {
+  background: var(--white);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius);
+  padding: 18px 22px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.contact-card-left {
+  min-width: 0;
+}
+
+.contact-card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 4px;
+  flex-wrap: wrap;
+}
+
+.contact-company {
+  font-size: 15.5px;
+  font-weight: 700;
+  color: var(--text-heading);
+}
+
+.contact-name {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+.contact-status {
+  font-size: 12.5px;
+  color: var(--text-heading);
+  margin-bottom: 6px;
+}
+
+.contact-meta {
+  font-size: 12px;
+  color: var(--text-secondary);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+}
+
+.contact-meta span strong {
+  color: var(--text-heading);
+  font-weight: 600;
+}
+
+.contact-card-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  flex-shrink: 0;
+  text-align: right;
+}
+
+.contact-fee {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--navy);
+  white-space: nowrap;
+}
+
+.contact-fee-label {
+  font-size: 10.5px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.page-footer {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 32px 40px;
+  text-align: center;
+}
+
+.page-footer p {
+  color: var(--text-secondary);
+  font-size: 11.5px;
+}
+
+/* ===================== SECONDARY PAGE HEADER ===================== */
+/* Used on Pipeline / Contacts / Touches — a lighter echo of the hero. */
+
+.page-header {
+  background: var(--navy);
+}
+
+.page-header-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 28px 32px 30px;
+}
+
+.page-header-title {
+  color: var(--white);
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin-bottom: 6px;
+}
+
+.page-header-subtitle {
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 13.5px;
+}
+
+.page-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 32px 56px;
+}
+
+/* ===================== FILTER BAR ===================== */
+
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 16px;
+  background: var(--white);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius);
+  padding: 14px 18px;
+  margin-bottom: 20px;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.filter-group label {
+  font-size: 10.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+}
+
+.filter-group select,
+.filter-group input[type="text"] {
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--text-heading);
+  background: var(--cream);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  padding: 7px 10px;
+  min-width: 150px;
+}
+
+.filter-group select:focus-visible,
+.filter-group input[type="text"]:focus-visible {
+  outline: none;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(198, 161, 91, 0.35);
+}
+
+.filter-search {
+  flex: 1;
+  min-width: 180px;
+}
+
+.filter-search input {
+  width: 100%;
+  min-width: 0;
+}
+
+.filter-reset {
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  padding: 7px 14px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--navy-secondary);
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.filter-reset:hover {
+  border-color: var(--navy-secondary);
+}
+
+.filter-count {
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--text-secondary);
+  align-self: center;
+  white-space: nowrap;
+}
+
+/* ===================== KANBAN BOARD (Pipeline page) ===================== */
+
+.kanban-board {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 18px;
+  align-items: start;
+}
+
+.kanban-column {
+  background: var(--white);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.kanban-column-header {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--navy);
+}
+
+.kanban-column-title {
+  color: var(--white);
+  font-size: 13.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.kanban-column-count {
+  color: var(--gold);
+  font-size: 12px;
+  font-weight: 700;
+  background: rgba(198, 161, 91, 0.16);
+  border-radius: 999px;
+  padding: 2px 9px;
+}
+
+.kanban-column-body {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 60px;
+}
+
+.kanban-card {
+  background: var(--cream);
+  border: 1px solid var(--border-subtle);
+  border-radius: 7px;
+  padding: 12px 14px;
+}
+
+.kanban-card-company {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-heading);
+  margin-bottom: 2px;
+}
+
+.kanban-card-contact {
+  font-size: 11.5px;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+.kanban-card-fee {
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 8px;
+}
+
+.kanban-card-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+/* ===================== CONTACTS TABLE (Contacts page) ===================== */
+
+.table-scroll {
+  background: var(--white);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius);
+  overflow-x: auto;
+}
+
+.contacts-table {
+  border-collapse: collapse;
+  width: 100%;
+  min-width: 1400px;
+  font-size: 12.5px;
+}
+
+.contacts-table th,
+.contacts-table td {
+  padding: 10px 14px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-subtle);
+  white-space: nowrap;
+}
+
+.contacts-table td.wrap-cell {
+  white-space: normal;
+  max-width: 240px;
+  min-width: 200px;
+}
+
+.contacts-table thead th {
+  background: var(--navy);
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 700;
+  position: sticky;
+  top: 0;
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.contacts-table thead th:hover {
+  color: var(--white);
+}
+
+.contacts-table thead th .sort-arrow {
+  margin-left: 4px;
+  color: var(--gold);
+  opacity: 0;
+}
+
+.contacts-table thead th.sorted .sort-arrow {
+  opacity: 1;
+}
+
+.contacts-table thead th.sticky-col,
+.contacts-table tbody td.sticky-col {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+}
+
+.contacts-table tbody td.sticky-col {
+  background: var(--white);
+  font-weight: 700;
+  box-shadow: 1px 0 0 var(--border-subtle);
+}
+
+.contacts-table thead th.sticky-col {
+  z-index: 2;
+  box-shadow: 1px 0 0 rgba(255,255,255,0.15);
+}
+
+.contacts-table tbody tr:hover td {
+  background: rgba(198, 161, 91, 0.06);
+}
+
+.contacts-table tbody tr:hover td.sticky-col {
+  background: #FBF7EE;
+}
+
+.contacts-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.contacts-table .cell-secondary {
+  color: var(--text-secondary);
+}
+
+.contacts-table a.cell-link {
+  color: var(--navy-secondary);
+  text-decoration: underline;
+}
+
+/* The empty-state cell spans every column (20+), so it's far wider than
+   the visible scroll container — sticking the message to the left edge
+   of whatever's currently scrolled into view keeps it visible regardless
+   of scroll position, instead of centering it across the full row width
+   (which can land off-screen entirely). */
+.contacts-table td.table-empty-cell {
+  padding: 0;
+  white-space: normal;
+}
+
+.table-empty-cell-inner {
+  position: sticky;
+  left: 20px;
+  display: inline-block;
+  padding: 24px 4px;
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+/* ===================== CONTACTS MOBILE CARDS ===================== */
+/* Under 860px the 21-column table is replaced by a stacked card list
+   (same .contact-card component used elsewhere) — both are always
+   rendered by contacts.js; only visibility is toggled here so there's no
+   separate render path to keep in sync. */
+
+.contacts-cards {
+  display: none;
+  flex-direction: column;
+  gap: 12px;
+}
+
+@media (max-width: 860px) {
+  .table-scroll { display: none; }
+  .contacts-cards { display: flex; }
+}
+
+/* ===================== VIEW-ALL LINKS (panel headers) ===================== */
+
+.panel-view-all {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--navy-secondary);
+  text-decoration: underline;
+  white-space: nowrap;
+}
+
+.panel-view-all:hover {
+  color: var(--gold);
+}
+
+/* ===================== WINS / CLOSED DEALS LIST ===================== */
+
+.wins-table-wrap {
+  background: var(--white);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.win-row {
+  display: grid;
+  grid-template-columns: 1.4fr 1.2fr 1.6fr 1.4fr 0.9fr 0.8fr;
+  gap: 12px;
+  align-items: center;
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--border-subtle);
+  font-size: 12.5px;
+}
+
+.win-row.win-row-header {
+  background: var(--navy);
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 700;
+}
+
+.win-row:last-child { border-bottom: none; }
+
+.win-company {
+  font-weight: 700;
+  color: var(--text-heading);
+}
+
+.win-row-header .win-company { color: rgba(255, 255, 255, 0.75); }
+
+.win-fee {
+  font-weight: 700;
+  color: var(--navy);
+  text-align: right;
+}
+
+.win-row-header .win-fee { color: rgba(255, 255, 255, 0.75); text-align: right; }
+
+@media (max-width: 860px) {
+  .win-row {
+    grid-template-columns: 1fr;
+    gap: 3px;
+  }
+  .win-row:not(.win-row-header) {
+    padding: 14px 20px;
+  }
+  .win-fee,
+  .win-row-header .win-fee {
+    text-align: left;
+  }
+  .win-row-header { display: none; }
+}
+
+.load-more-wrap {
+  display: flex;
+  justify-content: center;
+  padding: 18px 0 4px;
+}
+
+.load-more-btn {
+  background: var(--white);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  padding: 10px 20px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--navy-secondary);
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.load-more-btn:hover {
+  border-color: var(--gold);
+  color: var(--navy);
+}
+
+/* ===================== VIEW HEADING (Dashboard sub-views) ===================== */
+/* Gives stat-card-driven Dashboard views (Active prospects, Overdue
+   touches) an explicit in-content title, instead of relying solely on
+   the stat card's border to say what's being shown. */
+
+.view-heading {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-heading);
+  margin-bottom: 14px;
+}
+
+.view-heading-count {
+  font-weight: 500;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+/* ===================== CLICKABLE CARD AFFORDANCE ===================== */
+
+.clickable-card {
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.touch-row.clickable-card:hover,
+.prospect-row.clickable-card:hover {
+  background: rgba(198, 161, 91, 0.06);
+}
+
+.contact-card.clickable-card:hover,
+.kanban-card.clickable-card:hover {
+  border-color: var(--gold);
+  box-shadow: 0 4px 14px rgba(15, 42, 74, 0.08);
+}
+
+.contacts-table tbody tr.clickable-card {
+  cursor: pointer;
+}
+
+/* Every clickable-card now also carries tabindex="0" role="button" for
+   keyboard access — give keyboard focus the same visible treatment as
+   mouse hover gets, scoped per component since they sit on different
+   backgrounds (white cards vs. the navy kanban column body is still
+   cream, so one ring color works everywhere here). */
+.clickable-card:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: -2px;
+}
+
+/* ===================== CONTACT DETAIL MODAL ===================== */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 42, 74, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  z-index: 1000;
+}
+
+.modal-overlay[hidden] { display: none; }
+
+body.modal-open { overflow: hidden; }
+
+.modal {
+  background: var(--white);
+  border-radius: var(--radius);
+  max-width: 640px;
+  width: 100%;
+  max-height: 88vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(15, 42, 74, 0.35);
+}
+
+.modal-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.14);
+  color: var(--white);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s ease;
+  z-index: 1;
+}
+
+.modal-close:hover {
+  background: rgba(255, 255, 255, 0.28);
+}
+
+.modal-header {
+  background: var(--navy);
+  padding: 26px 56px 22px 28px;
+  border-radius: var(--radius) var(--radius) 0 0;
+}
+
+.modal-company {
+  color: var(--white);
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.modal-subline {
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 12.5px;
+  margin-bottom: 14px;
+}
+
+.modal-badges {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* The stage badge (Prospecting/Pitching/Closing) uses a near-navy tint by
+   default, which disappears against the modal header's navy background.
+   Scoped to .modal-badges only — priority and touch-status badges, and the
+   stage badge everywhere else on the site (white-background cards, the
+   Contacts table), are unaffected. */
+.modal-badges .badge-stage-prospecting,
+.modal-badges .badge-stage-pitching,
+.modal-badges .badge-stage-closing {
+  background: rgba(255, 255, 255, 0.16);
+  color: var(--white);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+/* Same problem, same fix, for the solid-navy Whale badge (navy-on-navy is
+   invisible) and a contrast top-up for the outline Minnow badge. */
+.modal-badges .badge-whale {
+  background: var(--gold);
+  color: var(--navy);
+}
+.modal-badges .badge-minnow {
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--white);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.modal-body-content {
+  padding: 22px 28px 28px;
+}
+
+.modal-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px 24px;
+  margin-bottom: 8px;
+}
+
+.modal-field label {
+  display: block;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+  font-weight: 600;
+  margin-bottom: 3px;
+}
+
+.modal-field .value {
+  font-size: 13.5px;
+  color: var(--text-heading);
+}
+
+.modal-section-title {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+  font-weight: 700;
+  margin: 18px 0 6px;
+}
+
+.modal-text-block {
+  font-size: 13px;
+  color: var(--text-heading);
+  line-height: 1.5;
+}
+
+.modal-touch-callout {
+  margin-top: 22px;
+  background: rgba(198, 161, 91, 0.12);
+  border: 1px solid rgba(198, 161, 91, 0.35);
+  border-radius: 8px;
+  padding: 16px 18px;
+}
+
+/* Requalify callout uses the same plum hue as the badge — visually says
+   "this is a different kind of flag than the gold touch-callout above,"
+   consistent with it meaning "decide," not "act." */
+.modal-requalify-callout {
+  margin-top: 22px;
+  background: rgba(107, 76, 122, 0.08);
+  border: 1px solid rgba(107, 76, 122, 0.3);
+  border-radius: 8px;
+  padding: 16px 18px;
+}
+
+.modal-requalify-callout-title {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #5C3F6B;
+  margin-bottom: 8px;
+}
+
+.modal-requalify-callout-text {
+  font-size: 13.5px;
+  color: var(--text-heading);
+  line-height: 1.5;
+}
+
+.modal-touch-callout-title {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #8A6B2F;
+  margin-bottom: 8px;
+}
+
+.modal-touch-callout-text {
+  font-size: 13.5px;
+  color: var(--text-heading);
+  line-height: 1.5;
+  margin-bottom: 14px;
+}
+
+.btn-gold {
+  background: var(--gold);
+  color: var(--navy);
+  border: none;
+  border-radius: 6px;
+  padding: 9px 16px;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.btn-gold:hover {
+  background: #B7924E;
+}
+
+.btn-outline {
+  display: inline-block;
+  background: transparent;
+  border: 1px solid var(--navy-secondary);
+  color: var(--navy-secondary);
+  border-radius: 6px;
+  padding: 9px 16px;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.btn-outline:hover {
+  background: var(--navy-secondary);
+  color: var(--white);
+}
+
+.email-preview {
+  margin-top: 14px;
+  background: var(--white);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  padding: 14px 16px;
+}
+
+.email-preview-row {
+  font-size: 12.5px;
+  margin-bottom: 10px;
+  color: var(--text-heading);
+}
+
+.email-preview-row strong {
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+  font-weight: 700;
+  display: block;
+  margin-bottom: 3px;
+}
+
+.email-preview-body {
+  white-space: pre-wrap;
+  font-size: 12.5px;
+  color: var(--text-heading);
+  background: var(--cream);
+  border-radius: 6px;
+  padding: 10px 12px;
+  line-height: 1.5;
+}
+
+@media (max-width: 700px) {
+  .modal-grid { grid-template-columns: 1fr; }
+  .modal-header { padding: 22px 48px 18px 20px; }
+  .modal-body-content { padding: 18px 20px 22px; }
+}
+
+/* ===================== PARTNER ROLLUP PAGE ===================== */
+
+.partner-note {
+  background: rgba(15, 42, 74, 0.05);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius);
+  padding: 14px 18px;
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+.partner-leaderboard {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.partner-row {
+  background: var(--white);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.partner-rank {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--cream);
+  border: 1px solid var(--border-subtle);
+  color: var(--navy-secondary);
+  font-size: 12.5px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.partner-name {
+  flex: 1;
+  min-width: 140px;
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--text-heading);
+}
+
+.partner-stats {
+  display: flex;
+  gap: 28px;
+  flex-wrap: wrap;
+}
+
+.partner-stat {
+  min-width: 90px;
+}
+
+.partner-stat-value {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--navy);
+}
+
+.partner-stat-value.compliance-good { color: #2E7D4F; }
+.partner-stat-value.compliance-warn { color: var(--warning); }
+
+.partner-stat-label {
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-secondary);
+}
+
+@media (max-width: 700px) {
+  .partner-row { flex-wrap: wrap; }
+  .partner-stats { gap: 18px; }
+}
+
+/* ===================== PRINTABLE SUMMARY PAGE ===================== */
+
+.summary-section {
+  background: var(--white);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 18px;
+}
+
+.summary-section-title {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-secondary);
+  margin-bottom: 14px;
+}
+
+.summary-figure-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 32px;
+}
+
+.summary-figure {
+  min-width: 140px;
+}
+
+.summary-figure-value {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--navy);
+  line-height: 1.15;
+}
+
+.summary-figure-label {
+  font-size: 11.5px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+.summary-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.summary-list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 13px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.summary-list li:last-child { border-bottom: none; }
+
+.summary-list .summary-list-name { font-weight: 600; color: var(--text-heading); }
+.summary-list .summary-list-value { color: var(--text-secondary); }
+
+.print-btn {
+  background: var(--navy);
+  color: var(--white);
+  border: none;
+  border-radius: 6px;
+  padding: 10px 18px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.print-btn:hover { background: var(--navy-secondary); }
+
+@media print {
+  .no-print { display: none !important; }
+  body { background: var(--white); }
+  .topnav, .page-footer { display: none !important; }
+  .summary-section { border: 1px solid #ccc; break-inside: avoid; }
+  .page-content { padding: 0; max-width: 100%; }
+  a[href]::after { content: ''; }
+}
+
+/* ===================== LOGIN PAGE (mock SSO) ===================== */
+
+.login-page {
+  min-height: 100vh;
+  background: var(--navy);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+}
+
+.login-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+  padding: 40px 36px;
+  max-width: 440px;
+  width: 100%;
+}
+
+.login-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 28px;
+}
+
+.login-brand-word {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-heading);
+  letter-spacing: 0.01em;
+}
+
+.login-title {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-heading);
+  margin: 0 0 22px;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.login-field-label {
+  font-size: 10.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+  margin-top: 14px;
+}
+
+/* Positioning context for the autofill-style suggestion dropdown below
+   each field. */
+.login-field-wrap {
+  position: relative;
+}
+
+.login-input {
+  width: 100%;
+  font-family: inherit;
+  font-size: 13.5px;
+  color: var(--text-heading);
+  background: var(--cream);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  padding: 10px 12px;
+  margin-top: 4px;
+}
+
+.login-input:focus-visible {
+  outline: none;
+  border-color: var(--gold);
+  box-shadow: 0 0 0 3px rgba(198, 161, 91, 0.35);
+}
+
+/* ---------- saved-account / saved-password suggestion dropdown ---------- */
+
+.login-suggest-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: var(--white);
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.18);
+  padding: 6px;
+  z-index: 30;
+}
+
+.login-suggest-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-radius: 6px;
+  padding: 8px;
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.login-suggest-item:hover,
+.login-suggest-item:focus-visible {
+  background: var(--cream);
+  outline: none;
+}
+
+.login-suggest-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--navy);
+  color: var(--gold);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.login-suggest-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.login-suggest-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-heading);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.login-suggest-email {
+  font-size: 11.5px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.login-suggest-item-password {
+  gap: 12px;
+}
+
+.login-password-dots {
+  font-size: 15px;
+  letter-spacing: 2px;
+  color: var(--text-heading);
+  line-height: 1;
+}
+
+/* ---------- checkbox + inline error ---------- */
+
+.login-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 18px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.login-checkbox {
+  width: 15px;
+  height: 15px;
+  accent-color: var(--gold);
+  cursor: pointer;
+}
+
+.login-error {
+  margin: 10px 0 0;
+  font-size: 12px;
+  color: var(--warning);
+}
+
+.login-submit-btn {
+  margin-top: 20px;
+  background: var(--gold);
+  color: var(--navy);
+  border: none;
+  border-radius: 6px;
+  padding: 12px 16px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s ease;
+}
+
+.login-submit-btn:hover:not(:disabled) {
+  background: #B7924E;
+}
+
+.login-submit-btn:disabled {
+  background: var(--border-subtle);
+  color: var(--text-secondary);
+  cursor: not-allowed;
+}
+
+.login-disclaimer {
+  margin-top: 20px;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.55);
+  text-align: center;
+  max-width: 440px;
+}
+
+@media (max-width: 480px) {
+  .login-card { padding: 28px 22px; }
+}
+
+/* ===================== SMALL SCREEN ADJUSTMENTS ===================== */
+
+@media (max-width: 700px) {
+  .hero-inner,
+  .stat-row,
+  .workspace,
+  .page-footer,
+  .page-header-inner,
+  .page-content {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .summary-figure-row {
+    gap: 20px;
+  }
+
+  .filter-bar {
+    align-items: stretch;
+  }
+
+  .filter-count {
+    margin-left: 0;
+  }
+
+  .stat-row {
+    grid-template-columns: 1fr;
+  }
+
+  .workspace {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    position: static;
+  }
+
+  .stage-list {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .stage-btn {
+    width: auto;
+  }
+
+  .hero-number {
+    font-size: 36px;
+  }
+
+  .contact-card {
+    flex-direction: column;
+  }
+
+  .contact-card-right {
+    align-items: flex-start;
+    flex-direction: row;
+    gap: 6px;
+  }
+}

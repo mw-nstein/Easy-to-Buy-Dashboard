@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Easy to Buy — Sign in</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="login-page">
+  <div class="login-card">
+    <div class="login-brand">
+      <span class="brand-mark" aria-hidden="true"></span>
+      <span class="login-brand-word">Easy to Buy</span>
+    </div>
+
+    <h1 class="login-title">Sign in to continue</h1>
+
+    <form id="login-form" class="login-form" autocomplete="off" novalidate>
+      <label class="login-field-label" for="login-email">Email</label>
+      <div class="login-field-wrap" id="email-field-wrap">
+        <input type="email" id="login-email" class="login-input" placeholder="you@company.com" autocomplete="off">
+        <div class="login-suggest-dropdown" id="email-suggest-dropdown" role="listbox" aria-label="Saved accounts" hidden>
+          <button type="button" class="login-suggest-item" role="option" data-persona="partner" data-email="cberger@mcguirewoods.com">
+            <span class="login-suggest-avatar">CB</span>
+            <span class="login-suggest-text">
+              <span class="login-suggest-name">Christian Berger &middot; Partner</span>
+              <span class="login-suggest-email">cberger@mcguirewoods.com</span>
+            </span>
+          </button>
+          <button type="button" class="login-suggest-item" role="option" data-persona="csuite" data-email="jblake@mcguirewoods.com">
+            <span class="login-suggest-avatar">JB</span>
+            <span class="login-suggest-text">
+              <span class="login-suggest-name">Jordan Blake &middot; COO</span>
+              <span class="login-suggest-email">jblake@mcguirewoods.com</span>
+            </span>
+          </button>
+        </div>
+      </div>
+
+      <label class="login-field-label" for="login-password">Password</label>
+      <div class="login-field-wrap" id="password-field-wrap">
+        <input type="password" id="login-password" class="login-input" placeholder="Password" autocomplete="off">
+        <div class="login-suggest-dropdown" id="password-suggest-dropdown" role="listbox" aria-label="Saved passwords" hidden>
+          <button type="button" class="login-suggest-item login-suggest-item-password" role="option" data-password="MockPassword123">
+            <span class="login-password-dots">&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;</span>
+            <span class="login-suggest-email">Saved password</span>
+          </button>
+          <button type="button" class="login-suggest-item login-suggest-item-password" role="option" data-password="MockPassphrase456!">
+            <span class="login-password-dots">&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;</span>
+            <span class="login-suggest-email">Saved password</span>
+          </button>
+        </div>
+      </div>
+
+      <label class="login-checkbox-label">
+        <input type="checkbox" id="login-stay-signed-in" class="login-checkbox">
+        Stay signed in
+      </label>
+
+      <p class="login-error" id="login-error" hidden>Select an account from the list above to continue.</p>
+
+      <button type="submit" class="login-submit-btn" id="login-submit-btn" disabled>Sign in</button>
+    </form>
+  </div>
+
+  <p class="login-disclaimer">Prototype dashboard &middot; mock SSO for demo purposes only &middot; no real authentication</p>
+</div>
+
+<script src="login.js"></script>
+</body>
+</html>
